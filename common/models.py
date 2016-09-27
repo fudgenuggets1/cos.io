@@ -71,7 +71,7 @@ class CenteredTextBlock(blocks.StructBlock):
 
 
 class ThreeColumnBlock(blocks.StructBlock):
- 
+
     background = blocks.ChoiceBlock(choices=COLOUR_CHOICES,default="white")
     left_column = blocks.StreamBlock([
             ('heading', blocks.CharBlock(classname="full title")),
@@ -97,7 +97,7 @@ class ThreeColumnBlock(blocks.StructBlock):
             ('photo_stream', COSPhotoStreamBlock()),
             ('centered_text', CenteredTextBlock()),
         ], icon='arrow-left', label='Left column content', classname='col4')
- 
+
     center_column = blocks.StreamBlock([
             ('heading', blocks.CharBlock(classname="full title")),
             ('paragraph', blocks.RichTextBlock()),
@@ -122,7 +122,7 @@ class ThreeColumnBlock(blocks.StructBlock):
             ('photo_stream', COSPhotoStreamBlock()),
             ('centered_text', CenteredTextBlock()),
         ], icon='arrow-right', label='Center column content', classname='col4')
-    
+
     right_column = blocks.StreamBlock([
             ('heading', blocks.CharBlock(classname="full title")),
             ('paragraph', blocks.RichTextBlock()),
@@ -147,14 +147,14 @@ class ThreeColumnBlock(blocks.StructBlock):
             ('photo_stream', COSPhotoStreamBlock()),
             ('centered_text', CenteredTextBlock()),
         ], icon='arrow-right', label='Right column content', classname='col4')
- 
+
     class Meta:
         template = 'common/blocks/three_column_block.html'
         icon = 'placeholder'
         label = 'Three Columns'
 
 class TwoColumnBlock(blocks.StructBlock):
-    
+
     background = blocks.ChoiceBlock(choices=COLOUR_CHOICES,default="white")
     left_column = blocks.StreamBlock([
             ('heading', blocks.CharBlock(classname="full title")),
@@ -179,7 +179,7 @@ class TwoColumnBlock(blocks.StructBlock):
             ('twitter_feed', TwitterBlock()),
             ('centered_text', CenteredTextBlock()),
         ], icon='arrow-left', label='Left column content', classname='col4')
- 
+
     right_column = blocks.StreamBlock([
             ('heading', blocks.CharBlock(classname="full title")),
             ('paragraph', blocks.RichTextBlock()),
@@ -203,15 +203,15 @@ class TwoColumnBlock(blocks.StructBlock):
             ('twitter_feed', TwitterBlock()),
             ('centered_text', CenteredTextBlock()),
         ], icon='arrow-right', label='Right column content', classname='col4')
- 
+
     class Meta:
         template = 'common/blocks/two_column_block.html'
         icon = 'placeholder'
         label = 'Two Columns'
- 
+
 @register_snippet
 class Person(ClusterableModel, index.Indexed):
-    
+
     first_name = models.CharField(max_length=255)
     middle_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255)
@@ -250,7 +250,7 @@ class Person(ClusterableModel, index.Indexed):
         ImageChooserPanel('photo'),
         StreamFieldPanel('other_info')
     ]
-    
+
     def __str__(self):
         return '{self.last_name}, {self.first_name}'.format(self=self)
 
@@ -262,7 +262,7 @@ class PersonTag(TaggedItemBase):
 @register_snippet
 class Footer(models.Model):
 
-    title = models.CharField(default='untitled', max_length=255)    
+    title = models.CharField(default='untitled', max_length=255)
 
     active = models.BooleanField(default=False)
 
@@ -297,7 +297,7 @@ class Footer(models.Model):
             for footer in Footer.objects.filter(active=True):
                 footer.active = False
                 footer.save()
-            
+
         return super(Footer, self).save(*args, **kwargs)
 
 
@@ -360,3 +360,18 @@ class HomePage(Page):
         StreamFieldPanel('content'),
     ]
 
+    #self.site = Page.get_site()
+    def serve(self, request):
+        array = []
+        new_array = []
+
+        site = self.get_site()
+        for page in site.root_page.get_children().live().in_menu():
+            array.append(page)
+
+        #import pdb; pdb.set_trace()
+
+        return render(request, self.template, {
+            'page': self,
+            'site': array,
+            })

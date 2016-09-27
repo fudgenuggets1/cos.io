@@ -8,6 +8,11 @@
 {% block content %}
   {% header %}
   <div class="content">
+    <ul>
+      {% for p in site %}
+        <li>{{ p }}</li>  
+      {% endfor %}
+    </ul>
     {% for b in page.content %}
       {% if b.block_type == 'heading' %}
         <h1 class='caps'>{{ b.value }}</h1>
