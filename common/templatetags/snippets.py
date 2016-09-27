@@ -17,15 +17,14 @@ def footer(context):
     }
 
 
-@register.inclusion_tag('common/person_detail.html')
-def person_detail(person):
+@register.inclusion_tag('common/blocks/people_block.html', takes_context=True)
+def people(context):
     return {
-        'person': person,
+        'people': Person.objects.all().order_by('last_name'),
     }
 
-
-@register.inclusion_tag('common/person_concise.html')
-def person_concise(person):
+@register.inclusion_tag('common/news_article_box.html')
+def news_article_box(article):
     return {
-        'person': person,
+        'article': article,
     }
